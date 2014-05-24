@@ -1,0 +1,112 @@
+﻿<Window x:Class="Hadouken.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
+        Title="Hadouken!" Height="587" Width="781" Icon="/Resources/ORE.ico">
+    <Window.Resources>
+        <CollectionViewSource x:Key="ApplicationsView" Source="{Binding Applications}">
+            <CollectionViewSource.SortDescriptions>
+                <scm:SortDescription PropertyName="ProcessName" Direction="Ascending"/>
+                <scm:SortDescription PropertyName="StartTime" Direction="Ascending" />
+            </CollectionViewSource.SortDescriptions>
+        </CollectionViewSource>
+
+        <Style x:Key="DataGridAcordo" TargetType="DataGrid">
+            <Setter Property="Margin" Value="0 5 0 5" />
+            <Setter Property="AutoGenerateColumns" Value="False" />
+            <Setter Property="RowBackground" Value="#AAEAEFF4" />
+            <Setter Property="AlternatingRowBackground" Value="#00FFFFFF" />
+            <Setter Property="Background" Value="#FFFFFFFF" />
+            <Setter Property="HeadersVisibility" Value="Column" />
+            <Setter Property="HorizontalScrollBarVisibility" Value="Auto" />
+            <Setter Property="VerticalScrollBarVisibility" Value="Auto" />
+            <Setter Property="SelectionMode" Value="Single" />
+            <Setter Property="CanUserReorderColumns" Value="False" />
+            <Setter Property="CanUserResizeColumns" Value="False" />
+            <Setter Property="CanUserSortColumns" Value="False" />
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected" />
+            <Setter Property="BorderBrush">
+                <Setter.Value>
+                    <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                        <GradientStop Color="#FFA3AEB9" Offset="0"/>
+                        <GradientStop Color="#FF8399A9" Offset="0.375"/>
+                        <GradientStop Color="#FF718597" Offset="0.375"/>
+                        <GradientStop Color="#FF617584" Offset="1"/>
+                    </LinearGradientBrush>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="BorderThickness" Value="1" />
+
+            <Setter Property="GridLinesVisibility" Value="Vertical" />
+            <Setter Property="HorizontalGridLinesBrush" Value="#FFC9CACA" />
+            <Setter Property="IsTabStop" Value="True" />
+            <Setter Property="VerticalGridLinesBrush" Value="#FFC9CACA" />
+
+        </Style>
+    </Window.Resources>
+    <Border Padding="10">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="30" />
+                <RowDefinition Height="10" />
+                <RowDefinition />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="auto" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="100" />
+                <RowDefinition Height="10" />
+                <RowDefinition Height="auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Label>Search:</Label>
+                <TextBox Grid.Column="1" Text="{Binding SearchString, UpdateSourceTrigger=PropertyChanged}" />
+            </Grid>
+            <DataGrid Grid.Row="2" Style="{StaticResource DataGridAcordo}" 
+                      ItemsSource="{Binding Source={StaticResource ApplicationsView}}" 
+                      AutoGenerateColumns="False">
+                <DataGrid.Columns>
+                    <DataGridTemplateColumn>
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <CheckBox IsChecked="{Binding Selected, UpdateSourceTrigger=PropertyChanged}" 
+                                          HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTextColumn Header="Process ID" Binding="{Binding ProcessId}" />
+                    <DataGridTextColumn Header="Process Name" Binding="{Binding ProcessName}" Width="*" SortMemberPath="{Binding ProcessName}" SortDirection="Ascending" />
+                    <DataGridTextColumn Header="Start Time" Binding="{Binding StartTime, StringFormat={}{0:dd/MM/yyyy HH:mm:ss}}" Width="120" />
+                </DataGrid.Columns>
+            </DataGrid>
+            <Grid Grid.Row="4">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="80" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Label>Key:</Label>
+                <ComboBox Grid.Column="1" ItemsSource="{Binding Keys}" DisplayMemberPath="DisplayValue" SelectedValue="{Binding SelectedKey}" />
+                <Label Grid.Column="2">Delay:</Label>
+                <TextBox Grid.Column="3" Text="{Binding Delay}" />
+            </Grid>
+            <ListBox Grid.Row="6" ItemsSource="{Binding Log}" />
+            <Grid Grid.Row="8">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition />
+                    <ColumnDefinition />
+                    <ColumnDefinition Width="5" />
+                    <ColumnDefinition />
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="1" Command="{Binding StartSendingKeys}">Start</Button>
+                <Button Grid.Column="3" Command="{Binding StopSendingKeys}">Stop</Button>
+            </Grid>
+
+        </Grid>
+    </Border>
+
+</Window>
