@@ -95,6 +95,8 @@
                     <ColumnDefinition />
                     <ColumnDefinition Width="130" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Label>Key:</Label>
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Keys}" DisplayMemberPath="DisplayValue" SelectedValue="{Binding SelectedKey}" />
@@ -102,6 +104,8 @@
                 <TextBox Grid.Column="3" Text="{Binding Delay}" />
                 <Label Grid.Column="4">Keystroke delay (ms):</Label>
                 <TextBox Grid.Column="5" Text="{Binding KeystrokeDelay}" />
+                <Label Grid.Column="6">Random delay (ms):</Label>
+                <TextBox Grid.Column="7" Text="{Binding RandomDelay}" />
             </Grid>
             <ListBox Grid.Row="6" ItemsSource="{Binding Log}" />
             <Grid Grid.Row="8">

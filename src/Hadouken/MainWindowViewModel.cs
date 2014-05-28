@@ -31,6 +31,7 @@ namespace Hadouken
         public ObservableCollection<ProcessModel> applications;
         private int delay;
         private int keystrokeDelay;
+        private int randomDelay;
         private List<string> log;
 
         public MainWindowViewModel()
@@ -43,6 +44,7 @@ namespace Hadouken
             this.SendKeyStrokeSignal = new ManualResetEvent(false);
             this.Delay = 1000;
             this.KeystrokeDelay = 350;
+            this.RandomDelay = 100;
             this.log = new List<string>();
             this.RefreshCommand = new RelayCommand(p => { this.RefreshApplications(); });
             this.StartSendingKeys = new RelayCommand(p => { this.SendKeyStrokeSignal.Set(); }, p => true);
@@ -88,6 +90,16 @@ namespace Hadouken
             set
             {
                 this.keystrokeDelay = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
+        public int RandomDelay
+        {
+            get { return this.randomDelay; }
+            set
+            {
+                this.randomDelay = value;
                 this.NotifyPropertyChanged();
             }
         }
@@ -150,25 +162,29 @@ namespace Hadouken
                           where sub_p == null
                           select app).ToArray();
 
-            App.Current.Dispatcher.Invoke(() =>
+            if (App.Current != null)
             {
-                foreach (var item in unlisted)
-                    this.Applications.Add(new ProcessModel(item));
+                App.Current.Dispatcher.Invoke(() =>
+                {
+                    foreach (var item in unlisted)
+                        this.Applications.Add(new ProcessModel(item));
 
-                foreach (var item in closed)
-                    this.Applications.Remove(item);
-            });
+                    foreach (var item in closed)
+                        this.Applications.Remove(item);
+                });
+            }
         }
 
 
         private async void SendKeyStrokesAction()
         {
+            Random r = new Random();
             while (true)
             {
                 if (this.SendKeyStrokeSignal.WaitOne())
                 {
                     this.SendKeyStrokes();
-                    await Task.Delay(this.Delay);
+                    await Task.Delay(this.Delay + r.Next(0, this.RandomDelay));
                 }
             }
         }
@@ -177,11 +193,12 @@ namespace Hadouken
         {
             if (this.SelectedKey != null)
             {
+                Random r = new Random();
                 foreach (var app in this.SelectedApplications)
                 {
                     PostMessage(app.WindowHandle, WM_KEYDOWN, (IntPtr)this.SelectedKey.KeyValue, IntPtr.Zero);
                     this.LogMessage(string.Format("{0} PostMessage {1}-{2} WM_KEYDOWN {3}", DateTime.Now, app.ProcessId, app.ProcessName, this.SelectedKey.DisplayValue));
-                    await Task.Delay(this.KeystrokeDelay);
+                    await Task.Delay(this.KeystrokeDelay + r.Next(0, this.RandomDelay));
                 }
             }
         }
