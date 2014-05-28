@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:scm="clr-namespace:System.ComponentModel;assembly=WindowsBase"
-        Title="Hadouken!" Height="587" Width="781" Icon="/Resources/ORE.ico">
+        Title="Hadouken!" Width="800" Height="700" Icon="/Resources/ORE.ico">
     <Window.Resources>
         <CollectionViewSource x:Key="ApplicationsView" Source="{Binding Applications}">
             <CollectionViewSource.SortDescriptions>
@@ -83,16 +83,25 @@
                 </DataGrid.Columns>
             </DataGrid>
             <Grid Grid.Row="4">
+                <Grid.Resources>
+                    <Style TargetType="Label">
+                        <Setter Property="HorizontalContentAlignment" Value="Right" />
+                    </Style>
+                </Grid.Resources>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition />
                     <ColumnDefinition Width="80" />
                     <ColumnDefinition />
+                    <ColumnDefinition Width="130" />
+                    <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Label>Key:</Label>
                 <ComboBox Grid.Column="1" ItemsSource="{Binding Keys}" DisplayMemberPath="DisplayValue" SelectedValue="{Binding SelectedKey}" />
-                <Label Grid.Column="2">Delay:</Label>
+                <Label Grid.Column="2">Delay (ms):</Label>
                 <TextBox Grid.Column="3" Text="{Binding Delay}" />
+                <Label Grid.Column="4">Keystroke delay (ms):</Label>
+                <TextBox Grid.Column="5" Text="{Binding KeystrokeDelay}" />
             </Grid>
             <ListBox Grid.Row="6" ItemsSource="{Binding Log}" />
             <Grid Grid.Row="8">

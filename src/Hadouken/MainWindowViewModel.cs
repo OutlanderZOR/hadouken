@@ -30,6 +30,7 @@ namespace Hadouken
         private string searchString;
         public ObservableCollection<ProcessModel> applications;
         private int delay;
+        private int keystrokeDelay;
         private List<string> log;
 
         public MainWindowViewModel()
@@ -41,6 +42,7 @@ namespace Hadouken
             this.SendKeyStrokeTask = Task.Run(() => this.SendKeyStrokesAction());
             this.SendKeyStrokeSignal = new ManualResetEvent(false);
             this.Delay = 1000;
+            this.KeystrokeDelay = 350;
             this.log = new List<string>();
             this.RefreshCommand = new RelayCommand(p => { this.RefreshApplications(); });
             this.StartSendingKeys = new RelayCommand(p => { this.SendKeyStrokeSignal.Set(); }, p => true);
@@ -56,6 +58,7 @@ namespace Hadouken
                 this.NotifyPropertyChanged();
             }
         }
+
         public ObservableCollection<ProcessModel> Applications
         {
             get { return this.applications; }
@@ -68,6 +71,7 @@ namespace Hadouken
         public KeyModel[] Keys { get; set; }
         public KeyModel SelectedKey { get; set; }
         public ManualResetEvent SendKeyStrokeSignal { get; set; }
+
         public int Delay
         {
             get { return this.delay; }
@@ -77,6 +81,17 @@ namespace Hadouken
                 this.NotifyPropertyChanged();
             }
         }
+
+        public int KeystrokeDelay
+        {
+            get { return this.keystrokeDelay; }
+            set
+            {
+                this.keystrokeDelay = value;
+                this.NotifyPropertyChanged();
+            }
+        }
+
         public string[] Log { get; set; }
 
         public ICommand RefreshCommand { get; set; }
@@ -158,7 +173,7 @@ namespace Hadouken
             }
         }
 
-        private void SendKeyStrokes()
+        private async void SendKeyStrokes()
         {
             if (this.SelectedKey != null)
             {
@@ -166,6 +181,7 @@ namespace Hadouken
                 {
                     PostMessage(app.WindowHandle, WM_KEYDOWN, (IntPtr)this.SelectedKey.KeyValue, IntPtr.Zero);
                     this.LogMessage(string.Format("{0} PostMessage {1}-{2} WM_KEYDOWN {3}", DateTime.Now, app.ProcessId, app.ProcessName, this.SelectedKey.DisplayValue));
+                    await Task.Delay(this.KeystrokeDelay);
                 }
             }
         }
