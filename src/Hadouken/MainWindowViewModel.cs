@@ -199,6 +199,7 @@ namespace Hadouken
                     PostMessage(app.WindowHandle, WM_KEYDOWN, (IntPtr)this.SelectedKey.KeyValue, IntPtr.Zero);
                     this.LogMessage(string.Format("{0} PostMessage {1}-{2} WM_KEYDOWN {3}", DateTime.Now, app.ProcessId, app.ProcessName, this.SelectedKey.DisplayValue));
                     await Task.Delay(this.KeystrokeDelay + r.Next(0, this.RandomDelay));
+                    PostMessage(app.WindowHandle, WM_KEYUP, (IntPtr)this.SelectedKey.KeyValue, IntPtr.Zero);
                 }
             }
         }
